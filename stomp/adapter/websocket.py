@@ -7,6 +7,7 @@ import random
 import sys
 import threading
 import time
+import re
 
 
 from stomp.connect import BaseConnection
@@ -198,10 +199,16 @@ class WebsocketConnection(BaseConnection, Protocol11):
     Represents a 1.1 websocket connection (comprising transport plus 1.1 protocol class)
     See :py:class:`stomp.adapter.websocket.WebsocketTransport` for details on the initialisation parameters.
     """
-    def __init__(self, host_and_port_and_path=None, prefer_localhost=False, reconnect_sleep_initial=0.1,
+    def __init__(self, ws_uris=None, prefer_localhost=False, reconnect_sleep_initial=0.1,
                  reconnect_sleep_increase=0.5, reconnect_sleep_jitter=0.1, reconnect_sleep_max=60.0,
                  reconnect_attempts_max=3, wait_on_receipt=False, timeout=None, heartbeats=(0, 0), keepalive=None,
                  vhost=None, auto_decode=True, auto_content_length=True, heart_beat_receive_scale=1.5):
+
+        host_and_port_and_path = []
+        for uri in ws_uris:
+            m = re.search(r'^ws://(?P<host>[^:]+):(?P<port>\d+)/(?P<path>.*)', uri)
+            host_and_port_and_path.append((m.group('host'), m.group('port'), m.group('path')))
+
         transport = WebsocketTransport(host_and_port_and_path, prefer_localhost, reconnect_sleep_initial,
                                        reconnect_sleep_increase, reconnect_sleep_jitter, reconnect_sleep_max,
                                        reconnect_attempts_max, wait_on_receipt, timeout, keepalive, vhost, auto_decode)
