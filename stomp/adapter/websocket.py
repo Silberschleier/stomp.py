@@ -25,15 +25,12 @@ log = logging.getLogger('stomp.py')
 
 class WebsocketTransport(BaseTransport):
     """
-    Represents a STOMP client 'transport'. Effectively this is the communications mechanism without the definition of
+    Represents a Web-STOMP client 'transport'. Effectively this is the communications mechanism without the definition of
     the protocol.
 
-    :param list((str,int)) host_and_ports: a list of (host, port) tuples
+    :param list((str,int,str)) hosts_and_ports_paths: a list of (host, port, path) tuples
     :param bool prefer_localhost: if True and the local host is mentioned in the (host,
         port) tuples, try to connect to this first
-    :param bool try_loopback_connect: if True and the local host is found in the host
-        tuples, try connecting to it using loopback interface
-        (127.0.0.1)
     :param float reconnect_sleep_initial: initial delay in seconds to wait before reattempting
         to establish a connection if connection to any of the
         hosts fails.
@@ -129,7 +126,6 @@ class WebsocketTransport(BaseTransport):
         if self.socket is not None:
             try:
                 with self.__socket_semaphore:
-                    # TODO: Was 'sendall', check if this is correct
                     self.socket.send(encoded_frame)
             except Exception:
                 _, e, _ = sys.exc_info()
@@ -172,9 +168,6 @@ class WebsocketTransport(BaseTransport):
                     self.socket.connect(ws_uri,
                                         timeout=self.__timeout)
 
-                    #if self.blocking is not None:
-                    #    self.socket.setblocking(self.blocking)
-
                     self.current_host_and_port = host_and_port
                     log.info("Established connection to host %s, port %s", host_and_port[0], host_and_port[1])
                     break
@@ -202,8 +195,8 @@ class WebsocketTransport(BaseTransport):
 
 class WebsocketConnection(BaseConnection, Protocol11):
     """
-    Represents a 1.1 connection (comprising transport plus 1.1 protocol class)
-    See :py:class:`stomp.transport.Transport` for details on the initialisation parameters.
+    Represents a 1.1 websocket connection (comprising transport plus 1.1 protocol class)
+    See :py:class:`stomp.adapter.websocket.WebsocketTransport` for details on the initialisation parameters.
     """
     def __init__(self, host_and_port_and_path=None, prefer_localhost=False, reconnect_sleep_initial=0.1,
                  reconnect_sleep_increase=0.5, reconnect_sleep_jitter=0.1, reconnect_sleep_max=60.0,
