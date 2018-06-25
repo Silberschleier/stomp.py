@@ -4,6 +4,7 @@ import uuid
 
 from stomp.adapter.websocket import WebsocketConnection
 from stomp.listener import TestListener
+from stomp.test.testutils import *
 
 
 class TestWebsocket(unittest.TestCase):
@@ -12,7 +13,7 @@ class TestWebsocket(unittest.TestCase):
         conn = WebsocketConnection()
         listener = TestListener('123')
         conn.set_listener('', listener)
-        conn.connect('guest', 'guest')
+        conn.connect(get_rabbitmq_user(), get_rabbitmq_password())
         self.conn = conn
         self.listener = listener
         self.timestamp = time.strftime('%Y%m%d%H%M%S')
