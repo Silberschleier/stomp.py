@@ -66,7 +66,7 @@ class WebsocketTransport(BaseTransport):
                  auto_decode=True):
         BaseTransport.__init__(self, wait_on_receipt, auto_decode)
 
-        if hosts_and_ports_and_paths is None:
+        if hosts_and_ports_and_paths is None or len(hosts_and_ports_and_paths) == 0:
             hosts_and_ports_and_paths = [('localhost', 15674, 'ws')]
 
         sorted_hosts_and_ports = []
@@ -203,6 +203,9 @@ class WebsocketConnection(BaseConnection, Protocol11):
                  reconnect_sleep_increase=0.5, reconnect_sleep_jitter=0.1, reconnect_sleep_max=60.0,
                  reconnect_attempts_max=3, wait_on_receipt=False, timeout=None, heartbeats=(0, 0), keepalive=None,
                  vhost=None, auto_decode=True, auto_content_length=True, heart_beat_receive_scale=1.5):
+
+        if ws_uris is None:
+            ws_uris = []
 
         host_and_port_and_path = []
         for uri in ws_uris:

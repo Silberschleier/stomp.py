@@ -4,16 +4,15 @@ import uuid
 
 from stomp.adapter.websocket import WebsocketConnection
 from stomp.listener import TestListener
-from stomp.test.testutils import *
 
 
-class TestMulticast(unittest.TestCase):
+class TestWebsocket(unittest.TestCase):
 
     def setUp(self):
         conn = WebsocketConnection()
         listener = TestListener('123')
         conn.set_listener('', listener)
-        conn.connect()
+        conn.connect('guest', 'guest')
         self.conn = conn
         self.listener = listener
         self.timestamp = time.strftime('%Y%m%d%H%M%S')
