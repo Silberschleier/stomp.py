@@ -105,7 +105,7 @@ class WebsocketTransport(BaseTransport):
 
         :rtype: bool
         """
-        return self.socket is not None and self.socket.connected
+        return self.socket is not None and self.socket.connected and super(WebsocketTransport, self).is_connected()
 
     def disconnect_socket(self):
         """
