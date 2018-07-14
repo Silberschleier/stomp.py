@@ -62,12 +62,12 @@ class WebsocketTransport(BaseTransport):
 
     def __init__(self, hosts_and_ports_and_paths=None, prefer_localhost=True, reconnect_sleep_initial=0.1,
                  reconnect_sleep_increase=0.5, reconnect_sleep_jitter=0.1, reconnect_sleep_max=60.0,
-                 reconnect_attempts_max=3, wait_on_receipt=False, timeout=None, keepalive=None, vhost=None,
-                 auto_decode=True):
+                 reconnect_attempts_max=3, wait_on_receipt=False, timeout=None, keepalive=None,
+                 vhost=None, auto_decode=True):
         BaseTransport.__init__(self, wait_on_receipt, auto_decode)
 
         if hosts_and_ports_and_paths is None or len(hosts_and_ports_and_paths) == 0:
-            hosts_and_ports_and_paths = [('localhost', 15674, 'ws')]
+            hosts_and_ports_and_paths = [('localhost', 15674, 'ws', 'ws')]
 
         sorted_hosts_and_ports = []
         sorted_hosts_and_ports.extend(hosts_and_ports_and_paths)
@@ -165,7 +165,12 @@ class WebsocketTransport(BaseTransport):
                 try:
                     log.info("Attempting connection to websocket %s", host_and_port)
                     self.socket = websocket.WebSocket()
-                    ws_uri = 'ws://{}:{}/{}'.format(host_and_port[0], host_and_port[1], host_and_port[2])
+                    proto, host, port, path = host_and_port[3], host_and_port[0], host_and_port[1], host_and_port[2]
+                    if port:
+                        ws_uri = '{}://{}:{}/{}'.format(proto, host, port, path)
+                    else:
+                        ws_uri = '{}://{}/{}'.format(proto, host, path)
+
                     self.socket.connect(ws_uri,
                                         timeout=self.__timeout)
 
@@ -209,8 +214,8 @@ class WebsocketConnection(BaseConnection, Protocol11):
 
         host_and_port_and_path = []
         for uri in ws_uris:
-            m = re.search(r'^ws://(?P<host>[^:]+):(?P<port>\d+)/(?P<path>.*)', uri)
-            host_and_port_and_path.append((m.group('host'), m.group('port'), m.group('path')))
+            m = re.search(r'^(?P<proto>ws|wss)://(?P<host>[^:]+)(:(?P<port>\d+))?/(?P<path>.*)', uri)
+            host_and_port_and_path.append((m.group('host'), m.group('port'), m.group('path'), m.group('proto')))
 
         transport = WebsocketTransport(host_and_port_and_path, prefer_localhost, reconnect_sleep_initial,
                                        reconnect_sleep_increase, reconnect_sleep_jitter, reconnect_sleep_max,
