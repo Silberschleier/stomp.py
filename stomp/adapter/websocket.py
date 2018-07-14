@@ -175,7 +175,7 @@ class WebsocketTransport(BaseTransport):
                                         timeout=self.__timeout)
 
                     self.current_host_and_port = host_and_port
-                    log.info("Established connection to host %s, port %s", host_and_port[0], host_and_port[1])
+                    log.info("Established connection to %s", ws_uri)
                     break
                 except WebSocketException:
                     self.socket = None
