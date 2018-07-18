@@ -2,7 +2,7 @@ import time
 import unittest
 import uuid
 
-from stomp.adapter.ws import WebsocketConnection
+from stomp.adapter.webstomp import WebsocketConnection
 from stomp.listener import TestListener
 from stomp.test.testutils import *
 
