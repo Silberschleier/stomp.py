@@ -116,7 +116,7 @@ setup(
     author_email='jasonrbriggs@gmail.com',
     platforms=['any'],
     install_requires=['docopt>=0.6.2', 'websocket-client'],
-    packages=['stomp', 'stomp.adapter'],
+    packages=['stomp', 'stomp.adapter', 'stomp.adapter.websocket'],
     cmdclass={'test': TestCommand, 'docs': DoxygenCommand, 'piptest': TestPipInstallCommand},
     entry_points={
         'console_scripts': [
