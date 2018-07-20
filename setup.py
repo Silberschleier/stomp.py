@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.core import Command
-from setuptools import setup
+from setuptools import setup, find_packages
 import platform
 import io
 import logging.config
@@ -116,7 +116,7 @@ setup(
     author_email='jasonrbriggs@gmail.com',
     platforms=['any'],
     install_requires=['docopt>=0.6.2', 'websocket-client'],
-    packages=['stomp', 'stomp.adapter'],
+    packages=find_packages(),
     cmdclass={'test': TestCommand, 'docs': DoxygenCommand, 'piptest': TestPipInstallCommand},
     entry_points={
         'console_scripts': [
